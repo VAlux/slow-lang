@@ -7,6 +7,8 @@ object Lexer:
     case UnknownLexeme(lexeme: String, line: Int, column: Int)
         extends LexerError(s"Unknown lexeme: $lexeme", line, column)
     case UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
+    case MalformedNumberLiteral(literal: String, line: Int, column: Int)
+        extends LexerError(s"Malformed number literal: $literal", line, column)
 
   val lexemeTokenTypeMapping: Map[String, TokenType] =
     TokenType.values
@@ -23,16 +25,15 @@ object Lexer:
       .map(lexemeType => Token(lexemeType, lexemeType.lexeme, lineNumber))
       .toList
 
-    val whiteSpaces = Set(' ', '\t', '\r')
-
     def parseStringLiteral(content: List[Char], line: Int, column: Int): (List[Char], Token | LexerError, Int) =
       if content.contains('"') then
         val (literal, rem) = content.splitAt(content.indexOf('"'))
-        (rem.tail, Token(STRING, literal.mkString, line), literal.length)
-      else (List.empty, LexerError.UnterminatedStringLexeme(line, column), content.length)
+        (rem.tail, Token(STRING, literal.mkString, line), literal.length + 2)
+      else (List.empty, LexerError.UnterminatedStringLexeme(line, column + 1), content.length)
 
     def parseNumberLiteral(content: List[Char], line: Int, column: Int): (List[Char], Token | LexerError, Int) =
-      ???
+      val literal = content.takeWhile(ch => ch.isDigit || ch == ',')
+      (content.drop(literal.length), Token(NUMBER, literal.mkString, line), literal.length)
 
     @tailrec
     def parseTokens(
@@ -80,7 +81,7 @@ object Lexer:
           case '!' :: tail                                    => (tail, Token(BANG, null, lineNumber), 1)
           case '=' :: tail                                    => (tail, Token(EQ, null, lineNumber), 1)
           case '"' :: tail                                    => parseStringLiteral(tail, lineNumber, index)
-          case ch :: tail if ch > 0 && ch < 9                 => parseNumberLiteral(tail, lineNumber, index)
+          case ch :: tail if ch.isDigit                       => parseNumberLiteral(ch :: tail, lineNumber, index)
           case lexemes => (lexemes.tail, LexerError.UnknownLexeme(current.head.toString, lineNumber, index), 1)
 
         if token != null then parseTokens(tail, parsed :+ token, index + length)
