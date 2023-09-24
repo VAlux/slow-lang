@@ -1,27 +1,11 @@
-<<<<<<< HEAD
-object Lexer:
-
-  sealed trait LexerError(reason: String, line: Int, column: Int)
-  case class UnknownLexeme(lexeme: String, line: Int, column: Int) extends LexerError(s"Unknown lexeme: $lexeme", line, column)
-=======
 import scala.annotation.tailrec
 import TokenType.*
 
 object Lexer:
 
-<<<<<<< HEAD
-  sealed trait LexerError(reason: String, line: Int, column: Int)
-  case class UnknownLexeme(lexeme: String, line: Int, column: Int)
-      extends LexerError(s"Unknown lexeme: $lexeme", line, column)
-  case class UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
->>>>>>> 9221089 (slox lexer POC)
-=======
   enum LexerError(reason: String, line: Int, column: Int):
-    case UnknownLexeme(lexeme: String, line: Int, column: Int)
-        extends LexerError(s"Unknown lexeme: $lexeme", line, column)
-
+    case UnknownLexeme(lexeme: String, line: Int, column: Int) extends LexerError(s"Unknown lexeme: $lexeme", line, column)
     case UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
->>>>>>> 79f0d5f (arguments parsing, file reading adjustments)
 
   val lexemeTokenTypeMapping: Map[String, TokenType] =
     TokenType.values
@@ -33,13 +17,11 @@ object Lexer:
     lines.zipWithIndex.flatMap(parseLine)
 
   def parseLine(line: String, lineNumber: Int): List[Token | LexerError] =
-<<<<<<< HEAD
     line
       .flatMap(character => lexemeTokenTypeMapping.get(character.toString()))
-      .map(lexemeType => LexemeToken(lexemeType, lexemeType.lexeme, lineNumber))
+      .map(lexemeType => Token(lexemeType, lexemeType.lexeme, lineNumber))
       .toList
 
-=======
     val whiteSpaces = Set(' ', '\t', '\r')
 
     def parseStringLiteral(content: List[Char], line: Int, column: Int): (List[Char], Token | LexerError, Int) =
@@ -104,4 +86,3 @@ object Lexer:
         else parseTokens(tail, parsed, index + length)
 
     parseTokens(line.toList)
->>>>>>> 9221089 (slox lexer POC)

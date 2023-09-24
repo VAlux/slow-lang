@@ -39,24 +39,8 @@ enum TokenType(val lexeme: String | Null = null):
   case NUMBER extends TokenType
   case EOF extends TokenType
 
-<<<<<<< HEAD
-sealed trait Token
-
-case class LexemeToken(
-    tokenType: TokenType,
-    lexeme: String,
-    line: Int
-) extends Token
-
-case class LiteralToken(
-    tokenType: TokenType,
-    literal: Number | String | Null,
-    line: Int
-) extends Token
-=======
 case class Token(
     tokenType: TokenType,
-    literal: Numeric[_] | String | Null,
+    literal: Numeric[_] | String | Unit,
     line: Int
 )
->>>>>>> 9221089 (slox lexer POC)
