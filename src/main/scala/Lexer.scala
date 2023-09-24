@@ -9,11 +9,19 @@ import TokenType.*
 
 object Lexer:
 
+<<<<<<< HEAD
   sealed trait LexerError(reason: String, line: Int, column: Int)
   case class UnknownLexeme(lexeme: String, line: Int, column: Int)
       extends LexerError(s"Unknown lexeme: $lexeme", line, column)
   case class UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
 >>>>>>> 9221089 (slox lexer POC)
+=======
+  enum LexerError(reason: String, line: Int, column: Int):
+    case UnknownLexeme(lexeme: String, line: Int, column: Int)
+        extends LexerError(s"Unknown lexeme: $lexeme", line, column)
+
+    case UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
+>>>>>>> 79f0d5f (arguments parsing, file reading adjustments)
 
   val lexemeTokenTypeMapping: Map[String, TokenType] =
     TokenType.values
@@ -38,7 +46,7 @@ object Lexer:
       if content.contains('"') then
         val (literal, rem) = content.splitAt(content.indexOf('"'))
         (rem.tail, Token(STRING, literal.mkString, line), literal.length)
-      else (List.empty, UnterminatedStringLexeme(line, column), content.length)
+      else (List.empty, LexerError.UnterminatedStringLexeme(line, column), content.length)
 
     def parseNumberLiteral(content: List[Char], line: Int, column: Int): (List[Char], Token | LexerError, Int) =
       ???
@@ -90,7 +98,7 @@ object Lexer:
           case '=' :: tail                                    => (tail, Token(EQ, null, lineNumber), 1)
           case '"' :: tail                                    => parseStringLiteral(tail, lineNumber, index)
           case ch :: tail if ch > 0 && ch < 9                 => parseNumberLiteral(tail, lineNumber, index)
-          case lexemes => (lexemes.tail, UnknownLexeme(current.head.toString, lineNumber, index), 1)
+          case lexemes => (lexemes.tail, LexerError.UnknownLexeme(current.head.toString, lineNumber, index), 1)
 
         if token != null then parseTokens(tail, parsed :+ token, index + length)
         else parseTokens(tail, parsed, index + length)
