@@ -4,7 +4,8 @@ import TokenType.*
 object Lexer:
 
   enum LexerError(reason: String, line: Int, column: Int):
-    case UnknownLexeme(lexeme: String, line: Int, column: Int) extends LexerError(s"Unknown lexeme: $lexeme", line, column)
+    case UnknownLexeme(lexeme: String, line: Int, column: Int)
+        extends LexerError(s"Unknown lexeme: $lexeme", line, column)
     case UnterminatedStringLexeme(line: Int, column: Int) extends LexerError("Unterminated string", line, column)
 
   val lexemeTokenTypeMapping: Map[String, TokenType] =

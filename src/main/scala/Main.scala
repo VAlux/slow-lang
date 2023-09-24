@@ -3,9 +3,9 @@ import scala.util.Try
 
 @main def entrypoint(args: String*): Unit =
   args match
-    case Nil => repl()
+    case Nil                       => repl()
     case (filename: String) :: Nil => runFile(filename)
-    case _ => printUsage()
+    case _                         => printUsage()
 
 def runFile(filename: String): Unit =
   Try(Source.fromFile(filename).getLines().toList).fold(
