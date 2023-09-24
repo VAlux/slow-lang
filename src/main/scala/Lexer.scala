@@ -90,7 +90,7 @@ object Lexer:
           case '=' :: tail                                    => (tail, Token(EQ, null, lineNumber), 1)
           case '"' :: tail                                    => parseStringLiteral(tail, lineNumber, index)
           case ch :: tail if ch > 0 && ch < 9                 => parseNumberLiteral(tail, lineNumber, index)
-          case lexemes => (lexemes.tail, UnknownLexeme(current.head.toString, lineNumber, index + 1), 1)
+          case lexemes => (lexemes.tail, UnknownLexeme(current.head.toString, lineNumber, index), 1)
 
         if token != null then parseTokens(tail, parsed :+ token, index + length)
         else parseTokens(tail, parsed, index + length)
