@@ -45,6 +45,7 @@ object Lexer:
       else
         val (tail, token, length) = current match
           case ('\t' | '\r' | ' ') :: tail                    => (tail, null, 1)
+          case '/' :: '/' :: tail                             => (List.empty, null, tail.length)
           case 'a' :: 'n' :: 'd' :: tail                      => (tail, Token(AND, null, lineNumber), 3)
           case 'o' :: 'r' :: tail                             => (tail, Token(OR, null, lineNumber), 2)
           case 'i' :: 'f' :: tail                             => (tail, Token(IF, null, lineNumber), 2)
